@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>ABDU — Artificial Brain for Digital Understanding</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap"
+        rel="stylesheet"
+    >
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- Atmosphere -->
+    <div class="scanlines"></div>
+    <div class="vignette"></div>
+
+    <!-- Screen corners -->
+    <span class="bracket bracket-tl"></span>
+    <span class="bracket bracket-tr"></span>
+    <span class="bracket bracket-bl"></span>
+    <span class="bracket bracket-br"></span>
+
+
+    <!-- =====================================================
+         TOP BAR
+    ====================================================== -->
+
+    <header class="topbar">
+
+        <div class="brand">
+
+            <div class="brand-name">
+                ABDU
+            </div>
+
+            <div class="brand-sub">
+                Artificial Brain for Digital Understanding
+            </div>
+
+        </div>
+
+
+        <div class="system-status">
+
+            <span>SYS</span>
+
+            <strong id="sysClock">
+                00:00:00
+            </strong>
+
+            <span class="online-dot"></span>
+
+            <span>ONLINE</span>
+
+        </div>
+
+    </header>
+
+
+    <!-- =====================================================
+         MAIN APPLICATION
+    ====================================================== -->
+
+    <main class="app">
+
+
+        <!-- =================================================
+             LEFT SIDEBAR
+        ================================================== -->
+
+        <aside class="left-panel panel">
+
+            <div class="panel-title">
+                SYSTEM
+            </div>
+
+
+            <!-- Current state -->
+
+            <div class="system-state">
+
+                <div class="state-indicator" id="stateIndicator"></div>
+
+                <div>
+
+                    <div class="state-label">
+                        STATUS
+                    </div>
+
+                    <div
+                        class="state-value"
+                        id="statusText"
+                    >
+                        Idle
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Voice -->
+
+            <div class="voice-section">
+
+                <div class="section-label">
+                    VOICE INPUT
+                </div>
+
+
+                <button
+                    class="mic-button"
+                    id="micBtn"
+                >
+
+                    <span class="mic-icon">
+
+                        <svg
+                            viewBox="0 0 24 24"
+                            width="22"
+                            height="22"
+                            fill="currentColor"
+                        >
+
+                            <path
+                                d="M12 15a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3z"
+                            />
+
+                            <path
+                                d="M19 11a1 1 0 0 0-2 0
+                                5 5 0 0 1-10 0
+                                1 1 0 0 0-2 0
+                                7 7 0 0 0 6 6.92V20H9
+                                a1 1 0 0 0 0 2h6
+                                a1 1 0 0 0 0-2h-2v-2.08
+                                A7 7 0 0 0 19 11z"
+                            />
+
+                        </svg>
+
+                    </span>
+
+                    <span id="micLabel">
+                        Talk to ABDU
+                    </span>
+
+                </button>
+
+
+                <!-- Voice level -->
+
+                <div class="voice-meter">
+
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+
+                </div>
+
+            </div>
+
+
+            <!-- Quick commands -->
+
+            <div class="quick-section">
+
+                <div class="section-label">
+                    TRY SAYING
+                </div>
+
+                <button
+                    class="quick-command"
+                    data-command="Open YouTube"
+                >
+                    Open YouTube
+                </button>
+
+                <button
+                    class="quick-command"
+                    data-command="Search Google for cats"
+                >
+                    Search Google for cats
+                </button>
+
+                <button
+                    class="quick-command"
+                    data-command="Open GitHub"
+                >
+                    Open GitHub
+                </button>
+
+            </div>
+
+        </aside>
+
+
+
+        <!-- =================================================
+             CENTER
+        ================================================== -->
+
+        <section class="center">
+
+            <!-- Character -->
+
+            <div class="character-area">
+
+                <div class="character-glow"></div>
+
+
+                <!-- Status above character -->
+
+                <div
+                    class="character-status"
+                    id="characterStatus"
+                >
+                    READY
+                </div>
+
+
+                <!-- Character -->
+
+                <div
+                    class="character"
+                    id="character"
+                >
+
+                    <div class="antenna">
+
+                        <div class="antenna-line"></div>
+
+                        <div class="antenna-light"></div>
+
+                    </div>
+
+
+                    <div class="head">
+
+                        <div class="face">
+
+                            <div
+                                class="eye eye-left"
+                                id="leftEye"
+                            ></div>
+
+                            <div
+                                class="eye eye-right"
+                                id="rightEye"
+                            ></div>
+
+
+                            <div class="mouth">
+
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                                <span></span>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="neck"></div>
+
+
+                    <div class="body-character">
+
+                        <div class="body-core">
+
+                            <div class="core-inner"></div>
+
+                        </div>
+
+
+                        <div class="body-line left"></div>
+                        <div class="body-line right"></div>
+
+                    </div>
+
+
+                    <div class="arm arm-left"></div>
+                    <div class="arm arm-right"></div>
+
+                </div>
+
+
+                <!-- Holographic platform -->
+
+                <div class="platform">
+
+                    <div class="platform-glow"></div>
+
+                    <div class="platform-ring"></div>
+
+                    <div class="platform-ring ring-two"></div>
+
+                </div>
+
+
+                <!-- Ambient particles -->
+
+                <div
+                    class="particles"
+                    id="particles"
+                ></div>
+
+            </div>
+
+
+            <!-- ABDU response -->
+
+            <div class="assistant-response">
+
+                <div class="response-label">
+                    ABDU
+                </div>
+
+                <div
+                    class="response-text"
+                    id="responseText"
+                >
+                    Hello. I'm ABDU.
+                </div>
+
+            </div>
+
+
+            <!-- Conversation -->
+
+            <div class="conversation">
+
+                <div class="conversation-header">
+
+                    <span>
+                        CONVERSATION
+                    </span>
+
+                    <button
+                        id="clearConversation"
+                        class="clear-button"
+                    >
+                        CLEAR
+                    </button>
+
+                </div>
+
+
+                <div
+                    class="messages"
+                    id="messages"
+                >
+
+                    <div class="message assistant">
+
+                        <div class="message-avatar">
+                            A
+                        </div>
+
+                        <div class="message-content">
+
+                            <div class="message-role">
+                                ABDU
+                            </div>
+
+                            <div class="message-text">
+                                Hello. I'm ready when you are.
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Text input -->
+
+                <form
+                    class="text-input-area"
+                    id="textForm"
+                >
+
+                    <input
+                        type="text"
+                        id="textInput"
+                        placeholder="Talk to ABDU..."
+                        autocomplete="off"
+                    >
+
+                    <button
+                        type="submit"
+                        class="send-button"
+                    >
+                        SEND
+                    </button>
+
+                </form>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             RIGHT SIDEBAR
+        ================================================== -->
+
+        <aside class="right-panel panel">
+
+            <div class="panel-title">
+                ACTIVITY
+            </div>
+
+
+            <div class="activity-status">
+
+                <span class="activity-dot"></span>
+
+                <span id="activityStatus">
+                    System ready
+                </span>
+
+            </div>
+
+
+            <div
+                class="activity-list"
+                id="logList"
+            ></div>
+
+
+            <div class="capabilities">
+
+                <div class="section-label">
+                    CAPABILITIES
+                </div>
+
+
+                <div class="capability">
+                    <span>●</span>
+                    Conversation
+                </div>
+
+                <div class="capability">
+                    <span>●</span>
+                    Voice interaction
+                </div>
+
+                <div class="capability">
+                    <span>●</span>
+                    Web search
+                </div>
+
+                <div class="capability">
+                    <span>●</span>
+                    Website navigation
+                </div>
+
+            </div>
+
+        </aside>
+
+    </main>
+
+
+    <script src="brain.js"></script>
+    <script src="script.js"></script>
+
+</body>
+</html>
