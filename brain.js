@@ -24,6 +24,35 @@ const BROWSER_SITES = {
 
 };
 
+/* ==========================================================
+   ABDU 1.5.2
+   TARGETED SEARCH URLS
+   ========================================================== */
+
+const SEARCH_ENGINES = {
+
+    google: query =>
+        `https://www.google.com/search?q=${encodeURIComponent(query)}`,
+
+    youtube: query =>
+        `https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`,
+
+    github: query =>
+        `https://github.com/search?q=${encodeURIComponent(query)}`,
+
+    reddit: query =>
+        `https://www.reddit.com/search/?q=${encodeURIComponent(query)}`,
+
+    amazon: query =>
+        `https://www.amazon.com/s?k=${encodeURIComponent(query)}`,
+
+    wikipedia: query =>
+        `https://en.wikipedia.org/w/index.php?search=${encodeURIComponent(query)}`,
+
+    spotify: query =>
+        `https://open.spotify.com/search/${encodeURIComponent(query)}`
+};
+
 
 /* ==========================================================
    MAIN ROUTER
@@ -51,7 +80,10 @@ function processUserInput(input) {
             break;
 
         case "search":
-            executeGoogleSearch(intent.query);
+            executeSearch(
+                intent.target,
+                intent.query
+            );
             break;
 
         case "conversation":
@@ -66,13 +98,13 @@ function processUserInput(input) {
 
 
 /* ==========================================================
-   INTENT DETECTION
+   ABDU 1.5.1
+   IMPROVED INTENT DETECTION
    ========================================================== */
 
 function detectIntent(input) {
 
     const text = input.trim();
-
 
     /* -------------------------
        GREETING
@@ -81,11 +113,9 @@ function detectIntent(input) {
     if (
         /^(hi|hello|hey|good morning|good afternoon|good evening)\b/i.test(text)
     ) {
-
         return {
             type: "greeting"
         };
-
     }
 
 
@@ -97,37 +127,49 @@ function detectIntent(input) {
         /^(open|launch|visit|go to|take me to)\s+(.+)$/i
     );
 
-
     if (openMatch) {
 
         return {
-
             type: "open",
-
             site: openMatch[2].trim()
-
         };
 
     }
 
 
     /* -------------------------
-       SEARCH
+       SEARCH SPECIFIC WEBSITE
        ------------------------- */
 
-    const searchMatch = text.match(
+    const siteSearchMatch = text.match(
+        /^(search|find|look up)\s+(youtube|google|github|reddit|amazon|wikipedia|spotify)\s+(?:for\s+)?(.+)$/i
+    );
+
+    if (siteSearchMatch) {
+
+        return {
+            type: "search",
+            target: siteSearchMatch[2].toLowerCase(),
+            query: siteSearchMatch[3].trim()
+        };
+
+    }
+
+
+    /* -------------------------
+       GOOGLE SEARCH
+       ------------------------- */
+
+    const googleSearchMatch = text.match(
         /^(search(?:\s+google)?|google|look up|find)(?:\s+for)?\s+(.+)$/i
     );
 
-
-    if (searchMatch) {
+    if (googleSearchMatch) {
 
         return {
-
             type: "search",
-
-            query: searchMatch[2].trim()
-
+            target: "google",
+            query: googleSearchMatch[2].trim()
         };
 
     }
@@ -138,13 +180,9 @@ function detectIntent(input) {
        ------------------------- */
 
     return {
-
         type: "conversation",
-
         query: text
-
     };
-
 }
 
 
@@ -345,6 +383,95 @@ function executeGoogleSearch(query) {
 
 }
 
+/* ==========================================================
+   TARGETED SEARCH
+   ========================================================== */
+
+function executeSearch(target, query) {
+
+    if (!query) {
+        return;
+    }
+
+    const searchTarget =
+        target?.toLowerCase() || "google";
+
+    const searchBuilder =
+        SEARCH_ENGINES[searchTarget];
+
+    if (!searchBuilder) {
+
+        log(
+            `Unknown search target: ${searchTarget}`,
+            "error"
+        );
+
+        executeGoogleSearch(query);
+
+        return;
+    }
+
+    const url =
+        searchBuilder(query);
+
+    setState(
+        ABDU_STATES.EXECUTING
+    );
+
+    const targetName =
+        searchTarget.charAt(0).toUpperCase() +
+        searchTarget.slice(1);
+
+    const response =
+        `Searching ${targetName} for "${query}"...`;
+
+    setResponse(
+        response
+    );
+
+    log(
+        `Searching ${targetName} for "${query}"`,
+        "action"
+    );
+
+    const newWindow =
+        window.open(
+            url,
+            "_blank"
+        );
+
+    if (!newWindow) {
+
+        log(
+            "Browser blocked the search tab.",
+            "error"
+        );
+
+        setResponse(
+            "The browser blocked the new tab. Please allow popups for ABDU."
+        );
+
+        return;
+    }
+
+    const message =
+        `Searching ${targetName} for "${query}".`;
+
+    addMessage(
+        "assistant",
+        message
+    );
+
+    conversation.push({
+        role: "assistant",
+        content: message
+    });
+
+    speak(
+        message
+    );
+}
+
 
 /* ==========================================================
    GREETING
@@ -409,8 +536,11 @@ const ABDU_SYSTEM_PROMPT = {
     content:
         "You are ABDU, Artificial Brain for Digital Understanding. " +
         "You are created by Anu Fazil. " +
+        "You are currently assisting Anu Fazil. " +
+        "Your assistant name is ABDU. " +
         "You are a helpful, intelligent, concise AI assistant. " +
         "Answer naturally and clearly. " +
+        "Use the user's name naturally when appropriate. " +
         "Do not claim to have abilities you do not have."
 };
 
