@@ -1263,7 +1263,7 @@ window.addEventListener(
 
 
         log(
-            "ABDU 1.1 interface initialized.",
+            "ABDU interface initialized.",
             "action"
         );
 

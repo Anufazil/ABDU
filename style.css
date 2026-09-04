@@ -680,6 +680,26 @@ body.listening .voice-meter span {
     transition: 0.3s;
 }
 
+/* ==========================================================
+   CHARACTER STAGE
+   ========================================================== */
+
+.character-stage {
+
+    position: relative;
+
+    width: 240px;
+    height: 270px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    z-index: 3;
+
+    perspective: 800px;
+}
 
 /* ==========================================================
    CHARACTER
@@ -695,7 +715,7 @@ body.listening .voice-meter span {
 
     z-index: 3;
 
-    animation: characterFloat 4.5s ease-in-out infinite;
+    animation: abduIdleFloat 4s ease-in-out infinite;
 
     transition:
         transform 0.5s ease,
@@ -727,7 +747,6 @@ body.listening .voice-meter span {
    ========================================================== */
 
 .head {
-
     position: absolute;
 
     top: 34px;
@@ -736,25 +755,48 @@ body.listening .voice-meter span {
     width: 118px;
     height: 96px;
 
-    border-radius: 50px;
+    border-radius: 42% 42% 48% 48%;
 
     background:
         linear-gradient(
             145deg,
-            #273650,
-            #101827
+            #31425f 0%,
+            #18243a 45%,
+            #0c1422 100%
         );
 
-    border: 1px solid rgba(79,216,255,0.3);
+    border: 1px solid rgba(79,216,255,0.38);
 
     box-shadow:
-        inset 0 2px 10px rgba(255,255,255,0.04),
-        0 0 35px rgba(79,216,255,0.08);
+        inset 0 3px 12px rgba(255,255,255,0.06),
+        inset 0 -8px 18px rgba(0,0,0,0.35),
+        0 0 35px rgba(79,216,255,0.10);
+
+    overflow: hidden;
 }
 
+.head::before {
+    content: "";
+
+    position: absolute;
+
+    top: 7px;
+    left: 18px;
+
+    width: 55px;
+    height: 12px;
+
+    border-radius: 50%;
+
+    background:
+        rgba(255,255,255,0.035);
+
+    filter: blur(3px);
+
+    pointer-events: none;
+}
 
 .face {
-
     position: absolute;
 
     left: 13px;
@@ -763,11 +805,22 @@ body.listening .voice-meter span {
     width: 92px;
     height: 46px;
 
-    border-radius: 25px;
+    border-radius: 24px;
 
-    background: #050a12;
+    background:
+        linear-gradient(
+            180deg,
+            #030914,
+            #01040a
+        );
 
-    border: 1px solid var(--border);
+    border: 1px solid rgba(79,216,255,0.30);
+
+    box-shadow:
+        inset 0 0 14px rgba(79,216,255,0.06),
+        0 0 12px rgba(79,216,255,0.05);
+
+    overflow: hidden;
 }
 
 
@@ -776,24 +829,33 @@ body.listening .voice-meter span {
    ========================================================== */
 
 .eye {
-
     position: absolute;
 
-    top: 13px;
+    top: 12px;
 
-    width: 12px;
-    height: 17px;
+    width: 13px;
+    height: 18px;
 
     border-radius: 50%;
 
-    background: var(--cyan);
+    background:
+        radial-gradient(
+            circle at 50% 45%,
+            #ffffff 0%,
+            var(--cyan) 35%,
+            #159fc9 100%
+        );
 
     box-shadow:
-        0 0 10px var(--cyan);
+        0 0 7px var(--cyan),
+        0 0 16px rgba(79,216,255,0.65);
 
     transition:
-        transform 0.15s,
-        background 0.3s;
+        transform 0.15s ease,
+        background 0.3s,
+        box-shadow 0.3s;
+
+    transform-origin: center;
 }
 
 
@@ -804,6 +866,27 @@ body.listening .voice-meter span {
 
 .eye-right {
     right: 25px;
+}
+
+.eye::after {
+    content: "";
+
+    position: absolute;
+
+    width: 4px;
+    height: 4px;
+
+    top: 3px;
+    left: 4px;
+
+    border-radius: 50%;
+
+    background: white;
+
+    opacity: 0.8;
+
+    box-shadow:
+        0 0 5px white;
 }
 
 
@@ -832,21 +915,25 @@ body.speaking .eye {
    MOUTH
    ========================================================== */
 
-.mouth {
+.mouth span {
+    width: 4px;
+    height: 5px;
 
-    position: absolute;
+    border-radius: 2px;
 
-    left: 32px;
+    background:
+        linear-gradient(
+            to top,
+            #159fc9,
+            var(--cyan)
+        );
 
-    bottom: 5px;
+    box-shadow:
+        0 0 5px rgba(79,216,255,0.7);
 
-    display: flex;
+    transform-origin: bottom;
 
-    align-items: flex-end;
-
-    gap: 4px;
-
-    height: 10px;
+    transition: 0.2s;
 }
 
 
@@ -1964,5 +2051,1064 @@ body.speaking .state-indicator {
     .conversation {
 
         height: 280px;
+    }
+}
+
+/* =========================================
+   1.2.3 — CHARACTER STATES
+   ========================================= */
+
+/* LISTENING */
+body.state-listening .eye {
+    transform: scaleY(1.15);
+    box-shadow:
+        0 0 10px var(--cyan),
+        0 0 22px rgba(79, 216, 255, 0.8);
+}
+
+body.state-listening .head {
+    box-shadow:
+        inset 0 3px 12px rgba(255,255,255,0.06),
+        inset 0 -8px 18px rgba(0,0,0,0.35),
+        0 0 40px rgba(79,216,255,0.22);
+}
+
+
+/* THINKING */
+body.state-thinking .eye {
+    animation: thinkingEyes 1.2s ease-in-out infinite;
+}
+
+body.state-thinking .mouth span {
+    animation: thinkingMouth 0.8s ease-in-out infinite alternate;
+}
+
+@keyframes thinkingEyes {
+    0%, 100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-3px);
+    }
+}
+
+@keyframes thinkingMouth {
+    from {
+        transform: scaleY(0.6);
+    }
+
+    to {
+        transform: scaleY(1);
+    }
+}
+
+
+/* SPEAKING */
+body.state-speaking .mouth span {
+    animation: speakingMouth 0.22s ease-in-out infinite alternate;
+}
+
+body.state-speaking .eye {
+    box-shadow:
+        0 0 9px var(--cyan),
+        0 0 20px rgba(79,216,255,0.8);
+}
+
+@keyframes speakingMouth {
+    from {
+        transform: scaleY(0.5);
+    }
+
+    to {
+        transform: scaleY(1.4);
+    }
+}
+
+
+/* EXECUTING */
+body.state-executing .head {
+    animation: executingHead 1s ease-in-out infinite;
+}
+
+body.state-executing .eye {
+    animation: executingEyes 0.7s linear infinite;
+}
+
+@keyframes executingHead {
+    0%, 100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-2px);
+    }
+}
+
+@keyframes executingEyes {
+    0% {
+        opacity: 0.5;
+    }
+
+    50% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0.5;
+    }
+}
+
+
+/* ERROR */
+body.state-error .eye {
+    background:
+        radial-gradient(
+            circle at 50% 45%,
+            #ffffff 0%,
+            #ff5c5c 35%,
+            #b91c1c 100%
+        );
+
+    box-shadow:
+        0 0 8px #ff5c5c,
+        0 0 18px rgba(255, 92, 92, 0.7);
+}
+
+body.state-error .head {
+    border-color: rgba(255, 92, 92, 0.5);
+    box-shadow:
+        inset 0 3px 12px rgba(255,255,255,0.04),
+        inset 0 -8px 18px rgba(0,0,0,0.35),
+        0 0 35px rgba(255,92,92,0.18);
+}
+/* =========================================
+   1.3.1 — CHARACTER IDLE MOVEMENT
+   ========================================= */
+
+.character {
+    animation: abduIdleFloat 4s ease-in-out infinite;
+    transform-origin: center bottom;
+}
+
+@keyframes abduIdleFloat {
+    0%,
+    100% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-5px);
+    }
+}
+.body-character {
+    animation: abduBreathing 3.5s ease-in-out infinite;
+    transform-origin: center;
+}
+
+@keyframes abduBreathing {
+    0%,
+    100% {
+        transform: scaleY(1);
+    }
+
+    50% {
+        transform: scaleY(1.015);
+    }
+}
+/* =========================================
+   1.3.2 — ANTENNA MOVEMENT
+   ========================================= */
+
+.antenna {
+    transform-origin: center bottom;
+    animation: antennaIdle 3s ease-in-out infinite;
+}
+
+/* IDLE */
+
+@keyframes antennaIdle {
+    0%,
+    100% {
+        transform: rotate(0deg);
+    }
+
+    50% {
+        transform: rotate(2deg);
+    }
+}
+
+
+/* ANTENNA SIGNAL */
+
+.antenna::after {
+    content: "";
+
+    position: absolute;
+    top: -8px;
+    left: 50%;
+
+    width: 7px;
+    height: 7px;
+
+    transform: translateX(-50%);
+
+    border-radius: 50%;
+
+    background: var(--cyan);
+
+    box-shadow:
+        0 0 6px var(--cyan),
+        0 0 14px rgba(79,216,255,0.7);
+
+    animation: antennaSignal 2s ease-in-out infinite;
+}
+
+@keyframes antennaSignal {
+    0%,
+    100% {
+        opacity: 0.45;
+        transform: translateX(-50%) scale(0.8);
+    }
+
+    50% {
+        opacity: 1;
+        transform: translateX(-50%) scale(1.25);
+    }
+}
+
+
+/* LISTENING */
+
+body.state-listening .antenna {
+    animation: antennaListening 0.8s ease-in-out infinite;
+}
+
+body.state-listening .antenna::after {
+    animation: antennaSignalFast 0.6s ease-in-out infinite;
+}
+
+@keyframes antennaListening {
+    0%,
+    100% {
+        transform: rotate(-3deg);
+    }
+
+    50% {
+        transform: rotate(3deg);
+    }
+}
+
+@keyframes antennaSignalFast {
+    0%,
+    100% {
+        opacity: 0.4;
+        transform: translateX(-50%) scale(0.8);
+    }
+
+    50% {
+        opacity: 1;
+        transform: translateX(-50%) scale(1.5);
+    }
+}
+
+
+/* THINKING */
+
+body.state-thinking .antenna {
+    animation: antennaThinking 1.4s ease-in-out infinite;
+}
+
+@keyframes antennaThinking {
+    0%,
+    100% {
+        transform: rotate(-2deg);
+    }
+
+    50% {
+        transform: rotate(2deg);
+    }
+}
+
+
+/* SPEAKING */
+
+body.state-speaking .antenna::after {
+    animation: antennaSpeaking 0.35s ease-in-out infinite alternate;
+}
+
+@keyframes antennaSpeaking {
+    from {
+        opacity: 0.4;
+        transform: translateX(-50%) scale(0.8);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(-50%) scale(1.35);
+    }
+}
+
+
+/* EXECUTING */
+
+body.state-executing .antenna {
+    animation: antennaExecuting 0.45s linear infinite;
+}
+
+body.state-executing .antenna::after {
+    animation: antennaSignalFast 0.3s linear infinite;
+}
+
+@keyframes antennaExecuting {
+    0% {
+        transform: rotate(-4deg);
+    }
+
+    50% {
+        transform: rotate(4deg);
+    }
+
+    100% {
+        transform: rotate(-4deg);
+    }
+}
+
+
+/* ERROR */
+
+body.state-error .antenna::after {
+    background: #ff5c5c;
+
+    box-shadow:
+        0 0 6px #ff5c5c,
+        0 0 16px rgba(255,92,92,0.8);
+}
+/* =========================================
+   1.3.3 — BODY / CORE ENERGY
+   ========================================= */
+
+/* CORE BASE */
+
+.body-core {
+    position: relative;
+    transform-origin: center;
+    animation: coreIdle 2.8s ease-in-out infinite;
+}
+
+@keyframes coreIdle {
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.025);
+    }
+}
+
+
+/* CORE INNER ENERGY */
+
+.body-core .core-inner {
+    animation: coreEnergy 2s ease-in-out infinite;
+}
+
+@keyframes coreEnergy {
+    0%,
+    100% {
+        opacity: 0.65;
+        transform: scale(0.92);
+    }
+
+    50% {
+        opacity: 1;
+        transform: scale(1.08);
+    }
+}
+
+
+/* LISTENING */
+
+body.state-listening .body-core {
+    animation: coreListening 0.9s ease-in-out infinite;
+}
+
+body.state-listening .body-core .core-inner {
+    animation: coreListeningInner 0.7s ease-in-out infinite;
+}
+
+@keyframes coreListening {
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.04);
+    }
+}
+
+@keyframes coreListeningInner {
+    0%,
+    100% {
+        opacity: 0.65;
+        transform: scale(0.9);
+    }
+
+    50% {
+        opacity: 1;
+        transform: scale(1.15);
+    }
+}
+
+
+/* THINKING */
+
+body.state-thinking .body-core {
+    animation: coreThinking 1.5s ease-in-out infinite;
+}
+
+@keyframes coreThinking {
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.035);
+    }
+}
+
+
+/* SPEAKING */
+
+body.state-speaking .body-core .core-inner {
+    animation: coreSpeaking 0.35s ease-in-out infinite alternate;
+}
+
+@keyframes coreSpeaking {
+    from {
+        opacity: 0.55;
+        transform: scale(0.9);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1.15);
+    }
+}
+
+
+/* EXECUTING */
+
+body.state-executing .body-core {
+    animation: coreExecuting 0.5s linear infinite;
+}
+
+body.state-executing .body-core .core-inner {
+    animation: coreExecutingInner 0.3s linear infinite;
+}
+
+@keyframes coreExecuting {
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.07);
+    }
+}
+
+@keyframes coreExecutingInner {
+    0%,
+    100% {
+        opacity: 0.5;
+        transform: scale(0.85);
+    }
+
+    50% {
+        opacity: 1;
+        transform: scale(1.2);
+    }
+}
+
+
+/* ERROR */
+
+body.state-error .body-core .core-inner {
+    animation: coreError 0.45s ease-in-out infinite alternate;
+}
+
+@keyframes coreError {
+    from {
+        opacity: 0.35;
+        transform: scale(0.85);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1.12);
+    }
+}
+/* =========================================
+   1.3.4 — STATE-BASED FULL-BODY MOVEMENT
+   ========================================= */
+
+/* -----------------------------------------
+   IDLE
+   Calm, relaxed posture
+   ----------------------------------------- */
+
+body.state-idle .character {
+    animation:
+        abduIdleFloat 4s ease-in-out infinite,
+        abduIdlePosture 4s ease-in-out infinite;
+}
+
+@keyframes abduIdlePosture {
+    0%,
+    100% {
+        rotate: 0deg;
+    }
+
+    50% {
+        rotate: 0.3deg;
+    }
+}
+
+
+/* -----------------------------------------
+   LISTENING
+   Slight forward attention
+   ----------------------------------------- */
+
+body.state-listening .character {
+    animation:
+        abduListenFloat 1.8s ease-in-out infinite;
+}
+
+@keyframes abduListenFloat {
+    0%,
+    100% {
+        transform: translateY(0) rotate(0deg);
+    }
+
+    50% {
+        transform: translateY(-2px) rotate(0.4deg);
+    }
+}
+
+
+/* -----------------------------------------
+   THINKING
+   Slight side-to-side movement
+   ----------------------------------------- */
+
+body.state-thinking .character {
+    animation:
+        abduThinkingMotion 2.4s ease-in-out infinite;
+}
+
+@keyframes abduThinkingMotion {
+    0%,
+    100% {
+        transform: translateY(0) rotate(0deg);
+    }
+
+    25% {
+        transform: translateY(-1px) rotate(-0.5deg);
+    }
+
+    75% {
+        transform: translateY(-1px) rotate(0.5deg);
+    }
+}
+
+
+/* -----------------------------------------
+   SPEAKING
+   Small rhythmic body movement
+   ----------------------------------------- */
+
+body.state-speaking .character {
+    animation:
+        abduSpeakingMotion 0.8s ease-in-out infinite;
+}
+
+@keyframes abduSpeakingMotion {
+    0%,
+    100% {
+        transform: translateY(0) scale(1);
+    }
+
+    50% {
+        transform: translateY(-1px) scale(1.008);
+    }
+}
+
+
+/* -----------------------------------------
+   EXECUTING
+   Energetic system activity
+   ----------------------------------------- */
+
+body.state-executing .character {
+    animation:
+        abduExecutingMotion 0.7s ease-in-out infinite;
+}
+
+@keyframes abduExecutingMotion {
+    0%,
+    100% {
+        transform: translateY(0) rotate(0deg);
+    }
+
+    25% {
+        transform: translateY(-1px) rotate(-0.7deg);
+    }
+
+    75% {
+        transform: translateY(-2px) rotate(0.7deg);
+    }
+}
+
+
+/* -----------------------------------------
+   ERROR
+   Small unstable movement
+   ----------------------------------------- */
+
+body.state-error .character {
+    animation:
+        abduErrorMotion 0.35s ease-in-out infinite;
+}
+
+@keyframes abduErrorMotion {
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    25% {
+        transform: translateX(-1px);
+    }
+
+    75% {
+        transform: translateX(1px);
+    }
+}
+/* =========================================
+   STATE-BASED ARM MOVEMENT
+   ========================================= */
+
+body.state-idle .arm-left,
+body.state-idle .arm-right {
+    animation: armsIdle 4s ease-in-out infinite;
+}
+
+@keyframes armsIdle {
+    0%,
+    100% {
+        transform: rotate(0deg);
+    }
+
+    50% {
+        transform: rotate(1deg);
+    }
+}
+
+
+body.state-listening .arm-left {
+    animation: leftArmListen 1.5s ease-in-out infinite;
+}
+
+body.state-listening .arm-right {
+    animation: rightArmListen 1.5s ease-in-out infinite;
+}
+
+@keyframes leftArmListen {
+    0%,
+    100% {
+        transform: rotate(0deg);
+    }
+
+    50% {
+        transform: rotate(-1.5deg);
+    }
+}
+
+@keyframes rightArmListen {
+    0%,
+    100% {
+        transform: rotate(0deg);
+    }
+
+    50% {
+        transform: rotate(1.5deg);
+    }
+}
+
+
+/* THINKING */
+
+body.state-thinking .arm-left,
+body.state-thinking .arm-right {
+    animation: armsThinking 2s ease-in-out infinite;
+}
+
+@keyframes armsThinking {
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-1px);
+    }
+}
+
+
+/* EXECUTING */
+
+body.state-executing .arm-left {
+    animation: leftArmExecuting 0.6s ease-in-out infinite;
+}
+
+body.state-executing .arm-right {
+    animation: rightArmExecuting 0.6s ease-in-out infinite;
+}
+
+@keyframes leftArmExecuting {
+    0%,
+    100% {
+        transform: rotate(-1deg);
+    }
+
+    50% {
+        transform: rotate(-3deg);
+    }
+}
+
+@keyframes rightArmExecuting {
+    0%,
+    100% {
+        transform: rotate(1deg);
+    }
+
+    50% {
+        transform: rotate(3deg);
+    }
+}
+/* =========================================
+   1.3.5 — ANIMATION POLISH
+   ========================================= */
+
+.character,
+.head,
+.body-character,
+.body-core,
+.core-inner,
+.arm,
+.antenna,
+.eye,
+.mouth span {
+    will-change: transform, opacity;
+}
+.character {
+    backface-visibility: hidden;
+    transform-style: preserve-3d;
+}
+
+.head,
+.body-character,
+.arm,
+.antenna {
+    backface-visibility: hidden;
+}
+/* State-sensitive visual transitions */
+
+.head,
+.eye,
+.mouth span,
+.identity-name,
+.identity-version,
+.body-core,
+.core-inner,
+.antenna::after {
+    transition:
+        opacity 0.35s ease,
+        box-shadow 0.35s ease,
+        border-color 0.35s ease,
+        background 0.35s ease;
+}
+/* =========================================
+   REDUCED MOTION
+   ========================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .character,
+    .head,
+    .body-character,
+    .body-core,
+    .core-inner,
+    .arm,
+    .antenna,
+    .antenna::after,
+    .eye,
+    .mouth span,
+    .identity-name {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+    }
+}
+/* =========================================
+   1.4.1 — CONVERSATION MESSAGE SYSTEM
+   ========================================= */
+
+.message {
+    animation: messageAppear 0.35s ease-out;
+    transform-origin: bottom;
+}
+
+@keyframes messageAppear {
+    from {
+        opacity: 0;
+        transform: translateY(8px) scale(0.98);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+
+/* USER MESSAGE */
+
+.message.user {
+    transition:
+        transform 0.2s ease,
+        filter 0.2s ease;
+}
+
+.message.user:hover {
+    transform: translateX(-2px);
+}
+
+
+/* ABDU MESSAGE */
+
+.message.assistant {
+    transition:
+        transform 0.2s ease,
+        filter 0.2s ease;
+}
+
+.message.assistant:hover {
+    transform: translateX(2px);
+}
+
+
+/* MESSAGE CONTENT */
+
+.message-content {
+    position: relative;
+    overflow: hidden;
+}
+
+
+/* SUBTLE LIGHT SWEEP */
+
+.message-content::after {
+    content: "";
+
+    position: absolute;
+    top: 0;
+    left: -120%;
+
+    width: 60%;
+    height: 100%;
+
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255,255,255,0.035),
+        transparent
+    );
+
+    transform: skewX(-20deg);
+
+    pointer-events: none;
+}
+
+.message:hover .message-content::after {
+    animation: messageSweep 0.7s ease;
+}
+
+@keyframes messageSweep {
+    from {
+        left: -120%;
+    }
+
+    to {
+        left: 150%;
+    }
+}
+/* ABDU MESSAGE IDENTITY */
+
+.message.assistant .message-avatar {
+    box-shadow:
+        0 0 8px rgba(79,216,255,0.35),
+        inset 0 0 8px rgba(79,216,255,0.08);
+}
+
+.message.assistant .message-role {
+    color: var(--cyan);
+}
+.messages {
+    scroll-behavior: smooth;
+}
+.message + .message {
+    margin-top: 10px;
+}
+/* =========================================
+   1.4.2 — THINKING INDICATOR
+   ========================================= */
+
+.thinking-indicator {
+    display: none;
+
+    align-items: center;
+    gap: 10px;
+
+    margin-top: 10px;
+    padding: 8px 12px;
+
+    opacity: 0;
+
+    animation: thinkingAppear 0.25s ease forwards;
+}
+
+.thinking-indicator.active {
+    display: flex;
+}
+
+@keyframes thinkingAppear {
+    from {
+        opacity: 0;
+        transform: translateY(5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+/* THINKING AVATAR */
+
+.thinking-avatar {
+    width: 28px;
+    height: 28px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid rgba(79,216,255,0.35);
+    border-radius: 50%;
+
+    background: rgba(79,216,255,0.05);
+
+    color: var(--cyan);
+
+    font-size: 11px;
+    font-weight: 700;
+
+    box-shadow:
+        0 0 8px rgba(79,216,255,0.15);
+
+    animation: thinkingAvatar 1.5s ease-in-out infinite;
+}
+
+@keyframes thinkingAvatar {
+    0%,
+    100% {
+        box-shadow:
+            0 0 6px rgba(79,216,255,0.15);
+    }
+
+    50% {
+        box-shadow:
+            0 0 14px rgba(79,216,255,0.4);
+    }
+}
+
+
+/* CONTENT */
+
+.thinking-content {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+
+/* LABEL */
+
+.thinking-label {
+    font-size: 8px;
+    letter-spacing: 1.5px;
+
+    color: rgba(255,255,255,0.45);
+}
+
+
+/* DOTS */
+
+.thinking-dots {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.thinking-dots span {
+    width: 4px;
+    height: 4px;
+
+    border-radius: 50%;
+
+    background: var(--cyan);
+
+    box-shadow:
+        0 0 5px rgba(79,216,255,0.7);
+
+    animation: thinkingDot 1.2s ease-in-out infinite;
+}
+
+.thinking-dots span:nth-child(2) {
+    animation-delay: 0.15s;
+}
+
+.thinking-dots span:nth-child(3) {
+    animation-delay: 0.3s;
+}
+
+@keyframes thinkingDot {
+    0%,
+    60%,
+    100% {
+        opacity: 0.25;
+        transform: translateY(0);
+    }
+
+    30% {
+        opacity: 1;
+        transform: translateY(-3px);
     }
 }
