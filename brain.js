@@ -50,7 +50,25 @@ const SEARCH_ENGINES = {
         `https://en.wikipedia.org/w/index.php?search=${encodeURIComponent(query)}`,
 
     spotify: query =>
-        `https://open.spotify.com/search/${encodeURIComponent(query)}`
+        `https://open.spotify.com/search/${encodeURIComponent(query)}`,
+
+    facebook: query =>
+        `https://www.facebook.com/search/top?q=${encodeURIComponent(query)}`,
+
+    instagram: query =>
+        `https://www.instagram.com/explore/search/keyword/?q=${encodeURIComponent(query)}`,
+
+    linkedin: query =>
+        `https://www.linkedin.com/search/results/all/?keywords=${encodeURIComponent(query)}`,
+
+    twitter: query =>
+        `https://twitter.com/search?q=${encodeURIComponent(query)}`,
+
+    x: query =>
+        `https://x.com/search?q=${encodeURIComponent(query)}`,
+
+    netflix: query =>
+        `https://www.netflix.com/search?q=${encodeURIComponent(query)}`
 };
 
 
@@ -106,10 +124,7 @@ function detectIntent(input) {
 
     const text = input.trim();
 
-    /* -------------------------
-       GREETING
-       ------------------------- */
-
+    // 1. Greeting
     if (
         /^(hi|hello|hey|good morning|good afternoon|good evening)\b/i.test(text)
     ) {
@@ -118,67 +133,84 @@ function detectIntent(input) {
         };
     }
 
+    // 2. Open + Search
+    const openAndSearchMatch = text.match(
+        /^(?:take me to|go to|open)\s+(youtube|google|github|reddit|amazon|wikipedia|spotify|facebook|instagram|linkedin|twitter|x|netflix)\s+(?:and\s+)?(?:search|find|look up)\s+(?:for\s+)?(.+)$/i
+    );
 
-    /* -------------------------
-       OPEN WEBSITE
-       ------------------------- */
+    if (openAndSearchMatch) {
+        return {
+            type: "search",
+            target: openAndSearchMatch[1].toLowerCase(),
+            query: openAndSearchMatch[2].trim()
+        };
+    }
 
+    // 3. Natural website search
+    const siteSearchMatch = text.match(
+        /^(?:search|find|look up|show me|i want to see|can you find|can you search)\s+(?:some\s+|the\s+)?(.+?)\s+(?:on|in|from)\s+(youtube|google|github|reddit|amazon|wikipedia|spotify|facebook|instagram|linkedin|twitter|x|netflix)\s*$/i
+    );
+
+    if (siteSearchMatch) {
+        return {
+            type: "search",
+            target: siteSearchMatch[2].toLowerCase(),
+            query: siteSearchMatch[1].trim()
+        };
+    }
+
+    // 4. Website-first search
+    const naturalSiteSearchMatch = text.match(
+        /^(?:on\s+)?(youtube|google|github|reddit|amazon|wikipedia|spotify|facebook|instagram|linkedin|twitter|x|netflix)\s+(?:search|find|look up)\s+(?:for\s+)?(.+)$/i
+    );
+
+    if (naturalSiteSearchMatch) {
+        return {
+            type: "search",
+            target: naturalSiteSearchMatch[1].toLowerCase(),
+            query: naturalSiteSearchMatch[2].trim()
+        };
+    }
+
+    // 5. Normal open command
     const openMatch = text.match(
         /^(open|launch|visit|go to|take me to)\s+(.+)$/i
     );
 
     if (openMatch) {
-
         return {
             type: "open",
             site: openMatch[2].trim()
         };
-
     }
 
-
-    /* -------------------------
-       SEARCH SPECIFIC WEBSITE
-       ------------------------- */
-
-    const siteSearchMatch = text.match(
-        /^(search|find|look up)\s+(youtube|google|github|reddit|amazon|wikipedia|spotify)\s+(?:for\s+)?(.+)$/i
+    // 6. Explicit website search
+    const explicitSiteSearchMatch = text.match(
+        /^(search|find|look up)\s+(youtube|google|github|reddit|amazon|wikipedia|spotify|facebook|instagram|linkedin|twitter|x|netflix)\s+(?:for\s+)?(.+)$/i
     );
 
-    if (siteSearchMatch) {
-
+    if (explicitSiteSearchMatch) {
         return {
             type: "search",
-            target: siteSearchMatch[2].toLowerCase(),
-            query: siteSearchMatch[3].trim()
+            target: explicitSiteSearchMatch[2].toLowerCase(),
+            query: explicitSiteSearchMatch[3].trim()
         };
-
     }
 
-
-    /* -------------------------
-       GOOGLE SEARCH
-       ------------------------- */
-
+    // 7. Google search fallback
     const googleSearchMatch = text.match(
         /^(search(?:\s+google)?|google|look up|find)(?:\s+for)?\s+(.+)$/i
     );
 
     if (googleSearchMatch) {
-
         return {
             type: "search",
             target: "google",
             query: googleSearchMatch[2].trim()
         };
-
     }
 
-
-    /* -------------------------
-       CONVERSATION
-       ------------------------- */
-
+    // 8. Conversation
     return {
         type: "conversation",
         query: text
@@ -394,7 +426,7 @@ function executeSearch(target, query) {
     }
 
     const searchTarget =
-        target?.toLowerCase() || "google";
+        target?.trim().toLowerCase() || "google";
 
     const searchBuilder =
         SEARCH_ENGINES[searchTarget];
@@ -467,9 +499,9 @@ function executeSearch(target, query) {
         content: message
     });
 
-    speak(
-        message
-    );
+    saveMemory();
+
+    speak(message);
 }
 
 
