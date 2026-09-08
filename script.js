@@ -426,39 +426,55 @@ if ("speechSynthesis" in window) {
 function speak(text, onDone) {
 
     if (!("speechSynthesis" in window)) {
-
         if (onDone) {
-
             onDone();
-
         }
-
         return;
     }
 
+    // Make sure we are working with a string
+    const originalText = String(text ?? "");
 
-    const phoneticText =
-        text.replace(
-            /\bABDU\b/gi,
-            "Abdoo"
-        );
+    // Convert ABDU to a natural pronunciation
+    let speechText = originalText.replace(
+        /\bABDU\b/gi,
+        "Abdoo"
+    );
 
+    /*
+     * HARD SPEECH CLEANER
+     *
+     * Keep ONLY:
+     * - English letters
+     * - numbers
+     * - normal punctuation
+     * - spaces
+     *
+     * Emojis, symbols, pictographs, ZWJ sequences,
+     * variation selectors, etc. are removed.
+     */
+    speechText = speechText
+        .normalize("NFKC")
+        .replace(/[^\x20-\x7E]/g, "")
+        .replace(/\s+/g, " ")
+        .trim();
+
+    if (!speechText) {
+        if (onDone) {
+            onDone();
+        }
+        return;
+    }
+
+    console.log("ABDU ORIGINAL TEXT:", originalText);
+    console.log("ABDU FINAL SPEECH TEXT:", speechText);
 
     const utterance =
-        new SpeechSynthesisUtterance(
-            phoneticText
-        );
+        new SpeechSynthesisUtterance(speechText);
 
-
-    utterance.rate =
-        1;
-
-    utterance.pitch =
-        1;
-
-    utterance.volume =
-        1;
-
+    utterance.rate = 1;
+    utterance.pitch = 1;
+    utterance.volume = 1;
 
     const preferred =
         voicesReady.find(
@@ -468,55 +484,35 @@ function speak(text, onDone) {
                 )
         );
 
-
     if (preferred) {
-
-        utterance.voice =
-            preferred;
+        utterance.voice = preferred;
     }
 
+    utterance.onstart = () => {
+        setState(
+            ABDU_STATES.SPEAKING
+        );
+    };
 
-    utterance.onstart =
-        () => {
+    utterance.onend = () => {
+        setState(
+            ABDU_STATES.IDLE
+        );
 
-            setState(
-                ABDU_STATES.SPEAKING
-            );
+        if (onDone) {
+            onDone();
+        }
+    };
 
-        };
+    utterance.onerror = () => {
+        setState(
+            ABDU_STATES.IDLE
+        );
 
-
-    utterance.onend =
-        () => {
-
-            setState(
-                ABDU_STATES.IDLE
-            );
-
-            if (onDone) {
-
-                onDone();
-
-            }
-
-        };
-
-
-    utterance.onerror =
-        () => {
-
-            setState(
-                ABDU_STATES.IDLE
-            );
-
-            if (onDone) {
-
-                onDone();
-
-            }
-
-        };
-
+        if (onDone) {
+            onDone();
+        }
+    };
 
     speechSynthesis.cancel();
 
@@ -525,6 +521,12 @@ function speak(text, onDone) {
     );
 }
 
+function browserError(message) {
+    setState(ABDU_STATES.ERROR);
+    setResponse(message);
+    log(message, "error");
+    speak(message);
+}
 
 /* ==========================================================
    SPEECH RECOGNITION

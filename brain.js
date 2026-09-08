@@ -20,8 +20,19 @@ const BROWSER_SITES = {
     spotify: "https://open.spotify.com",
     amazon: "https://www.amazon.com",
     wikipedia: "https://www.wikipedia.org",
-    maps: "https://maps.google.com"
-
+    maps: "https://maps.google.com",
+    stackoverflow: "https://stackoverflow.com",
+    w3schools: "https://www.w3schools.com",
+    mdn: "https://developer.mozilla.org",
+    bing: "https://www.bing.com",
+    duckduckgo: "https://duckduckgo.com",
+    claude: "https://claude.ai",
+    chatgpt: "https://chatgpt.com",
+    ollama: "https://ollama.com",
+    npm: "https://www.npmjs.com",
+    vercel: "https://vercel.com",
+    render: "https://render.com",
+    canva: "https://www.canva.com"
 };
 
 /* ==========================================================
@@ -68,7 +79,33 @@ const SEARCH_ENGINES = {
         `https://x.com/search?q=${encodeURIComponent(query)}`,
 
     netflix: query =>
-        `https://www.netflix.com/search?q=${encodeURIComponent(query)}`
+        `https://www.netflix.com/search?q=${encodeURIComponent(query)}`,
+    stackoverflow: query =>
+        `https://stackoverflow.com/search?q=${encodeURIComponent(query)}`,
+
+    w3schools: query =>
+        `https://www.w3schools.com/search/search.php?q=${encodeURIComponent(query)}`,
+
+    mdn: query =>
+        `https://developer.mozilla.org/en-US/search?q=${encodeURIComponent(query)}`,
+
+    bing: query =>
+        `https://www.bing.com/search?q=${encodeURIComponent(query)}`,
+
+    duckduckgo: query =>
+        `https://duckduckgo.com/?q=${encodeURIComponent(query)}`,
+
+    npm: query =>
+        `https://www.npmjs.com/search?q=${encodeURIComponent(query)}`,
+
+    youtube: query =>
+        `https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`,
+
+    github: query =>
+        `https://github.com/search?q=${encodeURIComponent(query)}`,
+
+    reddit: query =>
+        `https://www.reddit.com/search/?q=${encodeURIComponent(query)}`,
 };
 
 
@@ -309,27 +346,13 @@ function executeOpenSite(siteName) {
     );
 
 
-    const newWindow = window.open(
-        url,
-        "_blank"
-    );
-
+    const newWindow = window.open(url, "_blank");
 
     if (!newWindow) {
-
-        log(
-            "Browser blocked the new tab.",
-            "error"
+        browserError(
+            "I couldn't open the browser page. Your browser may have blocked the popup."
         );
-
-
-        setResponse(
-            "The browser blocked the new tab. Please allow popups for ABDU."
-        );
-
-
         return;
-
     }
 
 }
@@ -366,29 +389,14 @@ function executeGoogleSearch(query) {
         `https://www.google.com/search?q=${encodeURIComponent(query)}`;
 
 
-    const newWindow = window.open(
-        url,
-        "_blank"
-    );
-
+    const newWindow = window.open(url, "_blank");
 
     if (!newWindow) {
-
-        log(
-            "Browser blocked the Google search tab.",
-            "error"
+        browserError(
+            "I couldn't open the browser page. Your browser may have blocked the popup."
         );
-
-
-        setResponse(
-            "The browser blocked the new tab. Please allow popups for ABDU."
-        );
-
-
         return;
-
     }
-
 
     const message =
         `Searching Google for "${query}".`;
@@ -421,7 +429,8 @@ function executeGoogleSearch(query) {
 
 function executeSearch(target, query) {
 
-    if (!query) {
+    if (!query || !query.trim()) {
+        browserError("I need something to search for.");
         return;
     }
 
@@ -473,16 +482,9 @@ function executeSearch(target, query) {
         );
 
     if (!newWindow) {
-
-        log(
-            "Browser blocked the search tab.",
-            "error"
+        browserError(
+            `I couldn't open the ${targetName} search. Your browser may have blocked the popup.`
         );
-
-        setResponse(
-            "The browser blocked the new tab. Please allow popups for ABDU."
-        );
-
         return;
     }
 

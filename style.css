@@ -1986,33 +1986,41 @@ body.speaking .state-indicator {
 @media (max-width: 850px) {
 
     .app {
-
         grid-template-columns: 1fr;
-
         grid-template-rows:
             auto
             auto
             auto;
     }
 
+    /* Mobile priority:
+       Character first
+       System second
+       Activity third
+    */
+    .center {
+        order: 1;
+    }
+
+    .left-panel {
+        order: 2;
+    }
+
+    .right-panel {
+        order: 3;
+    }
 
     .left-panel,
     .right-panel {
-
         align-self: stretch;
-
         height: auto;
     }
 
-
     .character-area {
-
         min-height: 430px;
     }
 
-
     .right-panel {
-
         min-height: 300px;
     }
 }
