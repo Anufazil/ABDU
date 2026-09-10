@@ -601,7 +601,7 @@ async function askAI(message) {
     try {
 
         const response = await fetch(
-            "http://localhost:3000/api/chat",
+            "https://abdu-ai-backend.onrender.com/api/chat",
             {
                 method: "POST",
 
