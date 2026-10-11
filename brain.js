@@ -703,7 +703,7 @@ async function askAI(message) {
 
 
         const errorMessage =
-            "I couldn't connect to my local AI brain. Please make sure Ollama is running.";
+            "I couldn't connect to my AI service. Please try again in a moment.";
 
 
         setResponse(
